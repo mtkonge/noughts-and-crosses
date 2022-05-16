@@ -3,18 +3,19 @@ from typing import Tuple
 
 def main():
     positions: list[list] = [[1, ''], [2, ''], [3, ''], [4, ''], [5, ''], [6, ''], [7, ''], [8, ''], [9, ''] ]
-    state = True
+    playerState = True
     while True:
 
         command = input("Which one would you like to cross? ")
         command = command.lower()
         for i in range(len(positions)):
             if int(command) == positions[i][0]:
-                if state == True:
+                if playerState == True:
                     positions[i][1] = 'x'
+                    
                 else:
                     positions[i][1] = 'o'
-                state = not state
+                playerState = not playerState
             checkWinConditions(positions)
         
         print(positions)
