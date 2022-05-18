@@ -5,8 +5,7 @@ def main():
     positions: list[list] = [[1, ''], [2, ''], [3, ''], [4, ''], [5, ''], [6, ''], [7, ''], [8, ''], [9, ''] ]
     playerState = True
     while True:
-
-        command = input("Which one would you like to cross? ")
+        command = input("Which position? ")
         command = command.lower()
         for i in range(len(positions)):
             if int(command) == positions[i][0]:
