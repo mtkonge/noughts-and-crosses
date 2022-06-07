@@ -39,20 +39,18 @@ def checkRow(row: str, fileContent: str, turnHandler: TurnHandler):
                         continue
                     if i == 2:
                         return True
-                    return False
+                    return
 
 
 
 def checkWinConditions(gameFile: str, turnHandler: TurnHandler, lastPlay: str):
     with open(gameFile, "r") as f:
         fileContent = f.read()
-        if lastPlay == '1':
-            if fileContent[4] == turnHandler.turn:
-                if fileContent[8] == turnHandler.turn:
-                    return True
+        hasWon = False
         switcher = {
-        '1': 
-            checkRow('0', fileContent, turnHandler)
+        '1': checkRow('0', fileContent, turnHandler)
+
+
 
         }
         return switcher.get(lastPlay, False)
@@ -67,8 +65,9 @@ def playerTurn(gameFile: str, turnHandler: TurnHandler):
     with open(gameFile, "r+") as f:
         filecontent = f.read().replace(userInput, turnHandler.turn)
         recreateFile(gameFile, filecontent)
-    checkWinConditions(gameFile, turnHandler, userInput)
+    print(checkWinConditions(gameFile, turnHandler, userInput))
     turnHandler.switch()
+    
 
 def gameLoop(gameFile: str):
     resetGame(gameFile)
