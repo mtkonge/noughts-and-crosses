@@ -6,4 +6,3 @@ class TurnHandler:
             self.turn = 'o'
         else:
             self.turn = 'x' 
-

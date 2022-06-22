@@ -1,7 +1,6 @@
 import os
 from TurnHandler import TurnHandler
 
-
 def resetGame(gameFile: str):
     if not os.path.exists(gameFile):
         f = open(gameFile, 'x')
@@ -35,7 +34,7 @@ def formatFile(gameFile: str):
         fileContent = f.read()
         return "|" + fileContent[0] + "|" + fileContent[1] + "|" + fileContent[2] + "|\n|" + fileContent[3] + "|" + fileContent[4] + "|" + fileContent[5] + "|\n|" + fileContent[6] + "|" + fileContent[7] + "|" + fileContent[8] + "|"
 
-def checkRow(row: str, fileContent: str, turnHandler: TurnHandler) -> bool:            
+def checkRow(row: str, fileContent: str, turnHandler: TurnHandler):            
     startPosition = 0
     if row == '1':
         startPosition = 3
@@ -81,7 +80,7 @@ def checkCrossUp(fileContent: str, turnHandler: TurnHandler):
             continue
         return False
 
-def checkWinConditions(gameFile: str, turnHandler: TurnHandler, lastPlay: str):
+def gameWon(gameFile: str, turnHandler: TurnHandler, lastPlay: str):
     with open(gameFile, "r") as f:
         fileContent = f.read()
         if lastPlay == '1':
@@ -112,9 +111,17 @@ def checkWinConditions(gameFile: str, turnHandler: TurnHandler, lastPlay: str):
             if checkVerticalAndHorizontal('2', '2', fileContent, turnHandler) or checkCrossDown(fileContent, turnHandler):
                 return True
         return False
-        
-        
 
+def gameTie(gameFile: str):
+    with open(gameFile, "r") as f:
+        fileContent = f.read()
+        for i in range(len(fileContent)):
+            if i+1 == len(fileContent) and (fileContent[i] == 'x' or fileContent[i] == 'o'):
+                return True
+            if fileContent[i] == 'x' or fileContent[i] == 'o':
+                continue
+            return False
+            
 def playerTurn(gameFile: str, turnHandler: TurnHandler):
     userInput = input("Which position (must be a number on board)? ")
     if not validateInput(userInput, gameFile):
@@ -122,12 +129,14 @@ def playerTurn(gameFile: str, turnHandler: TurnHandler):
     with open(gameFile, "r+") as f:
         filecontent = f.read().replace(userInput, turnHandler.turn)
     recreateFile(gameFile, filecontent)
-    if checkWinConditions(gameFile, turnHandler, userInput):
-        print("Player " + turnHandler.turn + " won")
+    if gameWon(gameFile, turnHandler, userInput):
+        print("Player " + turnHandler.turn + " won!")
+        exit(0)
+    if gameTie(gameFile):
+        print("The game was a tie!")
         exit(0)
     turnHandler.switch()
     
-
 def gameLoop(gameFile: str):
     resetGame(gameFile)
     turnHandler = TurnHandler()
