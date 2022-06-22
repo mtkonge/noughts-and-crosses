@@ -42,9 +42,7 @@ def checkRow(row: str, fileContent: str, turnHandler: TurnHandler) -> bool:
     if row == '2':
         startPosition = 6
     for i in range(3):
-        print(fileContent[startPosition+i])
-        if i == 2:
-            print("neebuuis")
+        if i == 2 and fileContent[startPosition+i] == turnHandler.turn:
             return True
         if fileContent[startPosition+i] == turnHandler.turn:
             continue
@@ -57,10 +55,7 @@ def checkColumn(col: str, fileContent: str, turnHandler: TurnHandler):
     if col == '2':
         startPosition = 2
     for i in range(3):
-        print(fileContent[startPosition+i*3])
-        print(i)
-        if i == 2:
-            print("bruh")
+        if i == 2 and fileContent[startPosition+i*3] == turnHandler.turn:
             return True
         if fileContent[startPosition+i*3] == turnHandler.turn:
             continue
@@ -70,36 +65,53 @@ def checkVerticalAndHorizontal(row: str, col: str, fileContent: str, turnHandler
     if checkRow(row, fileContent, turnHandler) or checkColumn(col, fileContent, turnHandler):
         return True
 
+def checkCrossDown(fileContent: str, turnHandler: TurnHandler):
+    for i in range(3):
+        if i == 2 and fileContent[i*4] == turnHandler.turn:
+            return True
+        if fileContent[i*4] == turnHandler.turn:
+            continue
+        return False
+
+def checkCrossUp(fileContent: str, turnHandler: TurnHandler):
+    for i in range(3):
+        if i == 2 and fileContent[i*2+2] == turnHandler.turn:
+            return True
+        if fileContent[i*2+2] == turnHandler.turn:
+            continue
+        return False
+
 def checkWinConditions(gameFile: str, turnHandler: TurnHandler, lastPlay: str):
     with open(gameFile, "r") as f:
         fileContent = f.read()
         if lastPlay == '1':
-            if checkVerticalAndHorizontal('0', '0', fileContent, turnHandler):
+            if checkVerticalAndHorizontal('0', '0', fileContent, turnHandler) or checkCrossDown(fileContent, turnHandler):
                 return True
         elif lastPlay == '2':
             if checkVerticalAndHorizontal('0', '1', fileContent, turnHandler):
                 return True
         elif lastPlay == '3':
-            if checkVerticalAndHorizontal('0', '2', fileContent, turnHandler):
+            if checkVerticalAndHorizontal('0', '2', fileContent, turnHandler) or checkCrossUp(fileContent, turnHandler):
                 return True    
         elif lastPlay == '4':
             if checkVerticalAndHorizontal('1', '0', fileContent, turnHandler):
                 return True
         elif lastPlay == '5':
-            if checkVerticalAndHorizontal('1', '1', fileContent, turnHandler):
+            if checkVerticalAndHorizontal('1', '1', fileContent, turnHandler) or checkCrossDown(fileContent, turnHandler) or checkCrossUp(fileContent, turnHandler):
                 return True
         elif lastPlay == '6':
             if checkVerticalAndHorizontal('1', '2', fileContent, turnHandler):
                 return True
         elif lastPlay == '7':
-            if checkVerticalAndHorizontal('2', '0', fileContent, turnHandler):
+            if checkVerticalAndHorizontal('2', '0', fileContent, turnHandler) or checkCrossUp(fileContent, turnHandler):
                 return True
         elif lastPlay == '8':
             if checkVerticalAndHorizontal('2', '1', fileContent, turnHandler):
                 return True
         elif lastPlay == '9':
-            if checkVerticalAndHorizontal('2', '2', fileContent, turnHandler):
+            if checkVerticalAndHorizontal('2', '2', fileContent, turnHandler) or checkCrossDown(fileContent, turnHandler):
                 return True
+        return False
         
         
 
@@ -110,7 +122,9 @@ def playerTurn(gameFile: str, turnHandler: TurnHandler):
     with open(gameFile, "r+") as f:
         filecontent = f.read().replace(userInput, turnHandler.turn)
     recreateFile(gameFile, filecontent)
-    print(checkWinConditions(gameFile, turnHandler, userInput))
+    if checkWinConditions(gameFile, turnHandler, userInput):
+        print("Player " + turnHandler.turn + " won")
+        exit(0)
     turnHandler.switch()
     
 
